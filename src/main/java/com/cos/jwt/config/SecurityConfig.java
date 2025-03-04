@@ -45,12 +45,15 @@ public class SecurityConfig{
    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            //.addFilterBefore(new MyFilter1(), BasicAuthenticationFilter.class)  
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            //.addFilter(corsFilter)
+            /* STATELESS(무상태) 정책은 Spring Security가 세션을 생성하거나 사용하지 않도록 설정하는 것입니다.
+                즉, 클라이언트의 인증 정보를 서버의 세션에 저장하지 않음을 의미합니다.
+                주로 JWT 기반 인증을 사용할 때 적용됩니다. */
             //.addFilter(corsConfigurationSource)
             .cors(cors -> cors.configurationSource(corsConfigurationSource))
-            .formLogin(form -> form.disable())
+            .formLogin(form -> form.disable()) //Spring Security의 기본 로그인 페이지(Form Login)를 비활성화
             .httpBasic(basic -> basic.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/user/**").hasAnyRole("USER", "MANAGER", "ADMIN")
